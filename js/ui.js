@@ -195,6 +195,8 @@ export async function openPreviewModal(f, { onDelete, onDownload }) {
   if (!url) { visual.textContent = iconFor(f.category); return; }
   if (f.category === 'image') {
     visual.innerHTML = `<img src="${url}" alt="${f.file_name}">`;
+  } else if (f.category === 'video') {
+    visual.innerHTML = `<video src="${url}" controls playsinline preload="metadata"></video>`;
   } else if (f.mime_type === 'application/pdf') {
     visual.innerHTML = `<iframe src="${url}" style="width:100%;height:320px;border:0;"></iframe>`;
   } else if (f.category === 'archive') {

@@ -1,25 +1,29 @@
 export const $ = (id) => document.getElementById(id);
 
 export function categorize(mime) {
-  if (mime.startsWith('image/')) return 'image';
-  if (mime === 'application/zip' || mime === 'application/x-zip-compressed') return 'archive';
-  if (mime === 'application/pdf' || mime.startsWith('text/') || mime.includes('word') || mime.includes('sheet')) return 'document';
-  return 'other';
+  if (mime.startsWith("image/")) return "image";
+  if (mime.startsWith("video/")) return "video";
+  if (mime === "application/zip" || mime === "application/x-zip-compressed") return "archive";
+  if (mime === "application/pdf" || mime.startsWith("text/") || mime.includes("word") || mime.includes("sheet")) return "document";
+  return "other";
 }
 
 export function isTextMime(mime) {
-  return mime.startsWith('text/') || ['application/json', 'application/xml'].includes(mime);
+  return mime.startsWith("text/") || ["application/json", "application/xml"].includes(mime);
 }
 
 export function iconFor(category) {
-  return { image: '🖼️', document: '📄', archive: '🗜️', other: '📁' }[category];
+  return { image: "🖼️", video: "🎬", document: "📄", archive: "🗜️", other: "📁" }[category];
 }
 
 export function formatBytes(n) {
   if (n < 1024) return `${n} B`;
-  const units = ['KB', 'MB', 'GB'];
+  const units = ["KB", "MB", "GB"];
   let i = -1;
-  do { n /= 1024; i++; } while (n >= 1024 && i < units.length - 1);
+  do {
+    n /= 1024;
+    i++;
+  } while (n >= 1024 && i < units.length - 1);
   return `${n.toFixed(1)} ${units[i]}`;
 }
 

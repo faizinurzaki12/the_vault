@@ -629,6 +629,10 @@ select {
   max-height: 320px;
   object-fit: contain;
 }
+.preview-visual video {
+  max-width: 100%;
+  max-height: 320px;
+}
 .zip-list,
 .text-preview {
   width: 100%;

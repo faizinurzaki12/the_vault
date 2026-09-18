@@ -63,6 +63,7 @@
         </div>
       </div>
 
+      <div class="sidebar-scroll">
       <nav class="nav" id="categoryNav">
         <button class="nav-item is-active" data-category="all">All items</button>
         <button class="nav-item" data-category="image">Images</button>
@@ -70,6 +71,15 @@
         <button class="nav-item" data-category="archive">Archives</button>
         <button class="nav-item" data-category="other">Other</button>
       </nav>
+
+      <div class="nav-section">
+        <div class="nav-section-title">Folders</div>
+        <nav class="nav" id="folderNav">
+          <button class="nav-item is-active" data-folder="">📂 Root</button>
+        </nav>
+        <button class="btn btn--ghost btn--block btn--sm" id="newFolderBtn">＋ New folder</button>
+      </div>
+      </div>
 
       <button class="btn btn--ghost btn--block" id="signOutBtn">Sign out</button>
     </aside>
@@ -90,10 +100,28 @@
         </div>
       </header>
 
+      <p class="folder-hint" id="folderHint">Adding files to <strong>Root</strong>.</p>
       <section id="grid" class="grid"></section>
       <div id="scrollSentinel" aria-hidden="true"></div>
       <p id="emptyState" class="empty hidden">Nothing here yet. Add a file to start filling the vault.</p>
     </main>
+  </div>
+
+  <!-- ===================== NEW FOLDER MODAL ===================== -->
+  <div id="folderModal" class="modal hidden">
+    <div class="modal-card">
+      <header class="modal-head">
+        <h2>New folder</h2>
+        <button class="icon-btn" id="folderCloseBtn" aria-label="Close">✕</button>
+      </header>
+      <form id="folderForm" class="gate-form">
+        <label class="field">
+          <span>Folder name</span>
+          <input type="text" id="folderNameInput" maxlength="60" required>
+        </label>
+        <button type="submit" class="btn btn--primary btn--block">Create</button>
+      </form>
+    </div>
   </div>
 
   <!-- ===================== UPLOAD MODAL ===================== -->
@@ -103,11 +131,11 @@
         <h2>Add to the vault</h2>
         <button class="icon-btn" id="uploadCloseBtn" aria-label="Close">✕</button>
       </header>
-      <label id="dropzone" class="dropzone">
-        <input type="file" id="fileInput" multiple hidden>
+      <div id="dropzone" class="dropzone" role="button" tabindex="0" aria-label="Add files">
+        <input type="file" id="fileInput" multiple hidden accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.zip,.rar,.txt,.csv,.json">
         <span class="dropzone-title">Drop files here</span>
-        <span class="dropzone-sub">or click to browse — images are compressed automatically</span>
-      </label>
+        <span class="dropzone-sub">or tap to browse — pick several at once</span>
+      </div>
       <ul id="uploadList" class="upload-list"></ul>
     </div>
   </div>

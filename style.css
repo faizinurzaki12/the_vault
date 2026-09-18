@@ -269,7 +269,26 @@ select {
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
+}
+.sidebar-scroll {
   flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.nav-section-title {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin: 0.5rem 0.6rem 0.3rem;
+}
+.btn--sm {
+  padding: 0.4rem 0.6rem;
+  font-size: 0.78rem;
+  margin-top: 0.3rem;
 }
 .nav-item {
   text-align: left;
@@ -318,6 +337,14 @@ select {
   display: flex;
   gap: 0.6rem;
 }
+.folder-hint {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: -0.7rem 0 1rem;
+}
+.folder-hint strong {
+  color: var(--text);
+}
 .select {
   background: var(--panel);
   border: 1px solid var(--border);
@@ -361,6 +388,18 @@ select {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+.card--folder .card-thumb {
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 2rem;
+}
+.card--new-folder {
+  border-style: dashed;
+  border-color: var(--accent-dim);
+}
+.card--new-folder .card-thumb {
+  background: transparent;
 }
 .card-body {
   padding: 0.7rem 0.8rem 0.85rem;
@@ -438,6 +477,8 @@ select {
   padding: 2.2rem 1rem;
   text-align: center;
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
 }
 .dropzone:hover {
   border-color: var(--accent-dim);
@@ -598,15 +639,33 @@ select {
     border-bottom: 1px solid var(--border);
     gap: 1rem;
   }
+  .sidebar-scroll {
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+    flex: 1 1 auto;
+    align-items: center;
+  }
   .nav {
     flex-direction: row;
     flex-wrap: nowrap;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    flex: 1 1 auto;
+    flex-shrink: 0;
   }
   .nav-item {
     flex-shrink: 0;
+  }
+  .nav-section {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    flex-shrink: 0;
+  }
+  .nav-section-title {
+    margin: 0 0.3rem;
+  }
+  .btn--sm {
+    margin-top: 0;
   }
   .usage {
     order: 3;

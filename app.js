@@ -2,11 +2,29 @@ import { sb } from "./js/supabaseClient.js";
 import { QUOTA_BYTES, PAGE_SIZE } from "./js/config.js";
 import { $, debounce } from "./js/utils.js";
 import { getSession, signIn, signOut } from "./js/auth.js";
-import { fetchUsageStats, fetchFilesPage, fetchFolders, createFolder, uploadFile, deleteFile } from "./js/api.js";
-import { showGate, showApp, renderUsage, clearGrid, toggleEmptyState, appendFileCards, watchInfiniteScroll, renderUploadRow, openPreviewModal, renderFolderNav, renderFolderTiles, updateFolderHint } from "./js/ui.js";
+import { fetchUsageStats, fetchFilesPage, fetchFolders, createFolder, renameFolder, deleteFolderWithContents, uploadFile, deleteFile } from "./js/api.js";
+import {
+  showGate,
+  showApp,
+  renderUsage,
+  clearGrid,
+  toggleEmptyState,
+  appendFileCards,
+  watchInfiniteScroll,
+  renderUploadRow,
+  openPreviewModal,
+  renderFolderNav,
+  renderFolderTiles,
+  updateFolderHint,
+  showFolderMenu,
+  hideFolderMenu,
+  openFolderModal,
+} from "./js/ui.js";
 
 let session = null;
 let folders = []; // this user's folders, refreshed after login and after creating one
+let menuFolder = null; // folder currently targeted by the ⋮ / long-press / right-click menu
+let renamingFolder = null; // set while folderForm is being used to rename rather than create
 
 // Pagination / query state — reset to page 0 whenever category, search, sort or folder changes.
 const state = { category: "all", search: "", sortField: "created_at", sortDir: "desc", offset: 0, total: 0, loading: false, folder: "" };
@@ -71,7 +89,14 @@ async function resetAndLoad() {
       showBack: !!state.folder,
       onOpenFolder: (f) => selectFolder(f.id, f.name),
       onBack: () => selectFolder("", "Root"),
-      onNewFolder: openNewFolderModal,
+      onNewFolder: () => {
+        renamingFolder = null;
+        openFolderModal("create");
+      },
+      onFolderMenu: (f, x, y) => {
+        menuFolder = f;
+        showFolderMenu(x, y);
+      },
     });
   }
   await loadNextPage();
@@ -82,12 +107,6 @@ function selectFolder(id, name) {
   renderFolderNav(folders, id);
   updateFolderHint(name);
   resetAndLoad();
-}
-
-function openNewFolderModal() {
-  $("folderNameInput").value = "";
-  $("folderModal").classList.remove("hidden");
-  $("folderNameInput").focus();
 }
 
 async function loadNextPage() {
@@ -135,7 +154,10 @@ $("folderNav").addEventListener("click", (e) => {
   selectFolder(id, name);
 });
 
-$("newFolderBtn").addEventListener("click", openNewFolderModal);
+$("newFolderBtn").addEventListener("click", () => {
+  renamingFolder = null;
+  openFolderModal("create");
+});
 $("folderCloseBtn").addEventListener("click", () => $("folderModal").classList.add("hidden"));
 
 $("folderForm").addEventListener("submit", async (e) => {
@@ -143,14 +165,50 @@ $("folderForm").addEventListener("submit", async (e) => {
   const name = $("folderNameInput").value.trim();
   if (!name) return;
   try {
-    const created = await createFolder(name, session.user.id);
-    $("folderModal").classList.add("hidden");
-    await loadFolders();
-    selectFolder(created.id, created.name); // jump straight into the folder you just made
+    if (renamingFolder) {
+      const updated = await renameFolder(renamingFolder.id, name);
+      $("folderModal").classList.add("hidden");
+      await loadFolders();
+      if (state.folder === updated.id) updateFolderHint(updated.name);
+      resetAndLoad();
+    } else {
+      const created = await createFolder(name, session.user.id);
+      $("folderModal").classList.add("hidden");
+      await loadFolders();
+      selectFolder(created.id, created.name); // jump straight into the folder you just made
+    }
   } catch (err) {
-    alert(err.message?.includes("duplicate") ? "You already have a folder with that name." : "Could not create the folder.");
+    alert(err.message?.includes("duplicate") ? "You already have a folder with that name." : "Could not save the folder.");
     console.error(err);
   }
+});
+
+// ---- ⋮ / long-press / right-click menu on a folder tile ----
+$("folderMenuRename").addEventListener("click", () => {
+  hideFolderMenu();
+  renamingFolder = menuFolder;
+  openFolderModal("rename", menuFolder.name);
+});
+
+$("folderMenuDelete").addEventListener("click", async () => {
+  const target = menuFolder;
+  hideFolderMenu();
+  if (!target) return;
+  if (!confirm(`Delete "${target.name}" and everything inside it? This can't be undone.`)) return;
+  try {
+    await deleteFolderWithContents(target);
+    await loadFolders();
+    await refreshUsage();
+    if (state.folder === target.id) selectFolder("", "Root");
+    else resetAndLoad();
+  } catch (err) {
+    alert("Could not delete the folder.");
+    console.error(err);
+  }
+});
+
+document.addEventListener("click", (e) => {
+  if (!$("folderMenu").contains(e.target) && !e.target.closest(".card-menu-btn")) hideFolderMenu();
 });
 
 // ============================================================

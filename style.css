@@ -389,6 +389,9 @@ select {
   height: 100%;
   object-fit: cover;
 }
+.card--folder {
+  position: relative;
+}
 .card--folder .card-thumb {
   background: var(--accent-soft);
   color: var(--accent);
@@ -400,6 +403,70 @@ select {
 }
 .card--new-folder .card-thumb {
   background: transparent;
+}
+
+.card-menu-btn {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.35rem;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  line-height: 1;
+  opacity: 0;
+  transition:
+    opacity 0.15s ease,
+    background 0.15s ease;
+}
+.card--folder:hover .card-menu-btn {
+  opacity: 1;
+}
+@media (pointer: coarse) {
+  .card-menu-btn {
+    opacity: 1;
+  }
+} /* always tappable on touch devices */
+.card-menu-btn:hover {
+  background: var(--panel-2);
+  color: var(--text);
+}
+
+.folder-menu {
+  position: fixed;
+  z-index: 60;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow);
+  padding: 0.35rem;
+  min-width: 170px;
+  display: flex;
+  flex-direction: column;
+}
+.folder-menu-item {
+  text-align: left;
+  background: none;
+  border: none;
+  color: var(--text);
+  padding: 0.55rem 0.7rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+}
+.folder-menu-item:hover {
+  background: var(--panel-2);
+}
+.folder-menu-item--danger {
+  color: #f0a69e;
+}
+.folder-menu-item--danger:hover {
+  background: var(--danger-soft);
 }
 .card-body {
   padding: 0.7rem 0.8rem 0.85rem;

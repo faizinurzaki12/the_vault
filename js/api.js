@@ -57,6 +57,31 @@ export async function createFolder(name, userId) {
   return data;
 }
 
+export async function renameFolder(id, name) {
+  const { data, error } = await sb.from("vault_folders").update({ name }).eq("id", id).select().single();
+  if (error) throw error;
+  return data;
+}
+
+// Deletes every file inside the folder (storage objects + rows), then the folder itself.
+export async function deleteFolderWithContents(folder) {
+  const { data: rows, error: selErr } = await sb.from("vault_files").select("storage_path").eq("folder_id", folder.id);
+  if (selErr) throw selErr;
+
+  const paths = (rows ?? []).map((r) => r.storage_path);
+  for (let i = 0; i < paths.length; i += 100) {
+    // storage.remove in safe-sized batches
+    await sb.storage.from(BUCKET).remove(paths.slice(i, i + 100));
+  }
+  if (paths.length) {
+    const { error: delFilesErr } = await sb.from("vault_files").delete().eq("folder_id", folder.id);
+    if (delFilesErr) throw delFilesErr;
+  }
+
+  const { error: delFolderErr } = await sb.from("vault_folders").delete().eq("id", folder.id);
+  if (delFolderErr) throw delFolderErr;
+}
+
 export async function uploadFile(file, userId, folder) {
   const category = categorize(file.type || "application/octet-stream");
   const toUpload = category === "image" ? await compressImage(file) : file;

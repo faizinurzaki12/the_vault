@@ -1,164 +1,169 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Vault</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-  <!-- ===================== LOGIN GATE ===================== -->
-  <section id="gate" class="gate">
-    <div class="gate-panel">
-      <div class="dial" aria-hidden="true">
-        <svg viewBox="0 0 200 200">
-          <circle class="dial-ring" cx="100" cy="100" r="92"/>
-          <circle class="dial-ring dial-ring--inner" cx="100" cy="100" r="66"/>
-          <g class="dial-ticks">
-            <!-- 24 ticks -->
-          </g>
-          <g id="dialNeedle" class="dial-needle">
-            <line x1="100" y1="100" x2="100" y2="26"/>
-            <circle cx="100" cy="100" r="6"/>
-          </g>
-        </svg>
-      </div>
-      <h1>The Vault</h1>
-      <p class="gate-sub">Private storage. One key, one keeper.</p>
-
-      <form id="authForm" class="gate-form">
-        <label class="field">
-          <span>Email</span>
-          <input type="email" id="email" autocomplete="username" required>
-        </label>
-        <label class="field">
-          <span>Passphrase</span>
-          <input type="password" id="password" autocomplete="current-password" required>
-        </label>
-        <button type="submit" class="btn btn--primary btn--block" id="unlockBtn">Unlock</button>
-        <p class="gate-error" id="gateError" role="alert"></p>
-      </form>
-    </div>
-  </section>
-
-  <!-- ===================== DASHBOARD ===================== -->
-  <div id="app" class="app hidden">
-    <aside class="sidebar">
-      <div class="brand">
-        <span class="brand-mark">◆</span>
-        <span class="brand-name">The Vault</span>
-      </div>
-
-      <div class="usage">
-        <svg viewBox="0 0 100 100" class="usage-ring">
-          <circle cx="50" cy="50" r="42" class="usage-track"/>
-          <circle cx="50" cy="50" r="42" class="usage-fill" id="usageFill"/>
-        </svg>
-        <div class="usage-text">
-          <strong id="usageBytes">0 MB</strong>
-          <span id="usageCount">0 items</span>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Vault</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- ===================== LOGIN GATE ===================== -->
+    <section id="gate" class="gate">
+      <div class="gate-panel">
+        <div class="dial" aria-hidden="true">
+          <svg viewBox="0 0 200 200">
+            <circle class="dial-ring" cx="100" cy="100" r="92" />
+            <circle class="dial-ring dial-ring--inner" cx="100" cy="100" r="66" />
+            <g class="dial-ticks">
+              <!-- 24 ticks -->
+            </g>
+            <g id="dialNeedle" class="dial-needle">
+              <line x1="100" y1="100" x2="100" y2="26" />
+              <circle cx="100" cy="100" r="6" />
+            </g>
+          </svg>
         </div>
+        <h1>The Vault</h1>
+        <p class="gate-sub">Private storage. One key, one keeper.</p>
+
+        <form id="authForm" class="gate-form">
+          <label class="field">
+            <span>Email</span>
+            <input type="email" id="email" autocomplete="username" required />
+          </label>
+          <label class="field">
+            <span>Passphrase</span>
+            <input type="password" id="password" autocomplete="current-password" required />
+          </label>
+          <button type="submit" class="btn btn--primary btn--block" id="unlockBtn">Unlock</button>
+          <p class="gate-error" id="gateError" role="alert"></p>
+        </form>
       </div>
+    </section>
 
-      <div class="sidebar-scroll">
-      <nav class="nav" id="categoryNav">
-        <button class="nav-item is-active" data-category="all">All items</button>
-        <button class="nav-item" data-category="image">Images</button>
-        <button class="nav-item" data-category="document">Documents</button>
-        <button class="nav-item" data-category="archive">Archives</button>
-        <button class="nav-item" data-category="other">Other</button>
-      </nav>
-
-      <div class="nav-section">
-        <div class="nav-section-title">Folders</div>
-        <nav class="nav" id="folderNav">
-          <button class="nav-item is-active" data-folder="">📂 Root</button>
-        </nav>
-        <button class="btn btn--ghost btn--block btn--sm" id="newFolderBtn">＋ New folder</button>
-      </div>
-      </div>
-
-      <button class="btn btn--ghost btn--block" id="signOutBtn">Sign out</button>
-    </aside>
-
-    <main class="main">
-      <header class="topbar">
-        <div class="search">
-          <input type="search" id="searchInput" placeholder="Search your files…">
+    <!-- ===================== DASHBOARD ===================== -->
+    <div id="app" class="app hidden">
+      <aside class="sidebar">
+        <div class="brand">
+          <span class="brand-mark">◆</span>
+          <span class="brand-name">The Vault</span>
         </div>
-        <div class="topbar-actions">
-          <select id="sortSelect" class="select">
-            <option value="created_at-desc">Newest first</option>
-            <option value="created_at-asc">Oldest first</option>
-            <option value="file_name-asc">Name A–Z</option>
-            <option value="file_size-desc">Largest first</option>
-          </select>
-          <button class="btn btn--primary" id="uploadOpenBtn">＋ Add files</button>
+
+        <div class="usage">
+          <svg viewBox="0 0 100 100" class="usage-ring">
+            <circle cx="50" cy="50" r="42" class="usage-track" />
+            <circle cx="50" cy="50" r="42" class="usage-fill" id="usageFill" />
+          </svg>
+          <div class="usage-text">
+            <strong id="usageBytes">0 MB</strong>
+            <span id="usageCount">0 items</span>
+          </div>
         </div>
-      </header>
 
-      <p class="folder-hint" id="folderHint">Adding files to <strong>Root</strong>.</p>
-      <section id="grid" class="grid"></section>
-      <div id="scrollSentinel" aria-hidden="true"></div>
-      <p id="emptyState" class="empty hidden">Nothing here yet. Add a file to start filling the vault.</p>
-    </main>
-  </div>
+        <div class="sidebar-scroll">
+          <nav class="nav" id="categoryNav">
+            <button class="nav-item is-active" data-category="all">All items</button>
+            <button class="nav-item" data-category="image">Images</button>
+            <button class="nav-item" data-category="document">Documents</button>
+            <button class="nav-item" data-category="archive">Archives</button>
+            <button class="nav-item" data-category="other">Other</button>
+          </nav>
 
-  <!-- ===================== NEW FOLDER MODAL ===================== -->
-  <div id="folderModal" class="modal hidden">
-    <div class="modal-card">
-      <header class="modal-head">
-        <h2>New folder</h2>
-        <button class="icon-btn" id="folderCloseBtn" aria-label="Close">✕</button>
-      </header>
-      <form id="folderForm" class="gate-form">
-        <label class="field">
-          <span>Folder name</span>
-          <input type="text" id="folderNameInput" maxlength="60" required>
-        </label>
-        <button type="submit" class="btn btn--primary btn--block">Create</button>
-      </form>
+          <div class="nav-section">
+            <div class="nav-section-title">Folders</div>
+            <nav class="nav" id="folderNav">
+              <button class="nav-item is-active" data-folder="">📂 Root</button>
+            </nav>
+            <button class="btn btn--ghost btn--block btn--sm" id="newFolderBtn">＋ New folder</button>
+          </div>
+        </div>
+
+        <button class="btn btn--ghost btn--block" id="signOutBtn">Sign out</button>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div class="search">
+            <input type="search" id="searchInput" placeholder="Search your files…" />
+          </div>
+          <div class="topbar-actions">
+            <select id="sortSelect" class="select">
+              <option value="created_at-desc">Newest first</option>
+              <option value="created_at-asc">Oldest first</option>
+              <option value="file_name-asc">Name A–Z</option>
+              <option value="file_size-desc">Largest first</option>
+            </select>
+            <button class="btn btn--primary" id="uploadOpenBtn">＋ Add files</button>
+          </div>
+        </header>
+
+        <p class="folder-hint" id="folderHint">Adding files to <strong>Root</strong>.</p>
+        <section id="grid" class="grid"></section>
+        <div id="scrollSentinel" aria-hidden="true"></div>
+        <p id="emptyState" class="empty hidden">Nothing here yet. Add a file to start filling the vault.</p>
+      </main>
     </div>
-  </div>
 
-  <!-- ===================== UPLOAD MODAL ===================== -->
-  <div id="uploadModal" class="modal hidden">
-    <div class="modal-card">
-      <header class="modal-head">
-        <h2>Add to the vault</h2>
-        <button class="icon-btn" id="uploadCloseBtn" aria-label="Close">✕</button>
-      </header>
-      <div id="dropzone" class="dropzone" role="button" tabindex="0" aria-label="Add files">
-        <input type="file" id="fileInput" multiple hidden accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.zip,.rar,.txt,.csv,.json">
-        <span class="dropzone-title">Drop files here</span>
-        <span class="dropzone-sub">or tap to browse — pick several at once</span>
+    <!-- ===================== FOLDER CONTEXT MENU ===================== -->
+    <div id="folderMenu" class="folder-menu hidden">
+      <button class="folder-menu-item" id="folderMenuRename">✏️ Rename</button>
+      <button class="folder-menu-item folder-menu-item--danger" id="folderMenuDelete">🗑️ Delete folder</button>
+    </div>
+
+    <!-- ===================== NEW / RENAME FOLDER MODAL ===================== -->
+    <div id="folderModal" class="modal hidden">
+      <div class="modal-card">
+        <header class="modal-head">
+          <h2 id="folderModalTitle">New folder</h2>
+          <button class="icon-btn" id="folderCloseBtn" aria-label="Close">✕</button>
+        </header>
+        <form id="folderForm" class="gate-form">
+          <label class="field">
+            <span>Folder name</span>
+            <input type="text" id="folderNameInput" maxlength="60" required />
+          </label>
+          <button type="submit" class="btn btn--primary btn--block" id="folderSubmitBtn">Create</button>
+        </form>
       </div>
-      <ul id="uploadList" class="upload-list"></ul>
     </div>
-  </div>
 
-  <!-- ===================== PREVIEW MODAL ===================== -->
-  <div id="previewModal" class="modal hidden">
-    <div class="modal-card modal-card--wide">
-      <header class="modal-head">
-        <h2 id="previewName">File</h2>
-        <button class="icon-btn" id="previewCloseBtn" aria-label="Close">✕</button>
-      </header>
-      <div class="preview-body">
-        <div class="preview-visual" id="previewVisual"></div>
-        <dl class="preview-meta" id="previewMeta"></dl>
+    <!-- ===================== UPLOAD MODAL ===================== -->
+    <div id="uploadModal" class="modal hidden">
+      <div class="modal-card">
+        <header class="modal-head">
+          <h2>Add to the vault</h2>
+          <button class="icon-btn" id="uploadCloseBtn" aria-label="Close">✕</button>
+        </header>
+        <div id="dropzone" class="dropzone" role="button" tabindex="0" aria-label="Add files">
+          <input type="file" id="fileInput" multiple hidden accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.zip,.rar,.txt,.csv,.json" />
+          <span class="dropzone-title">Drop files here</span>
+          <span class="dropzone-sub">or tap to browse — pick several at once</span>
+        </div>
+        <ul id="uploadList" class="upload-list"></ul>
       </div>
-      <footer class="modal-foot">
-        <button class="btn btn--danger" id="deleteBtn">Delete</button>
-        <button class="btn btn--primary" id="downloadBtn">Download</button>
-      </footer>
     </div>
-  </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
-  <script type="module" src="app.js"></script>
-</body>
+    <!-- ===================== PREVIEW MODAL ===================== -->
+    <div id="previewModal" class="modal hidden">
+      <div class="modal-card modal-card--wide">
+        <header class="modal-head">
+          <h2 id="previewName">File</h2>
+          <button class="icon-btn" id="previewCloseBtn" aria-label="Close">✕</button>
+        </header>
+        <div class="preview-body">
+          <div class="preview-visual" id="previewVisual"></div>
+          <dl class="preview-meta" id="previewMeta"></dl>
+        </div>
+        <footer class="modal-foot">
+          <button class="btn btn--danger" id="deleteBtn">Delete</button>
+          <button class="btn btn--primary" id="downloadBtn">Download</button>
+        </footer>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+    <script type="module" src="app.js"></script>
+  </body>
 </html>
